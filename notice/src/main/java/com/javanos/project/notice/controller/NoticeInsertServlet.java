@@ -1,32 +1,46 @@
 package com.javanos.project.notice.controller;
 
+import java.io.IOException;
+
+import com.javanos.project.notice.model.dto.NoticeDTO;
+import com.javanos.project.notice.model.service.NoticeService;
+
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-/**
- * Servlet implementation class NoticeInsertServlet
- */
 public class NoticeInsertServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		String path = "/WEB-INF/views/notice/insertForm.jsp";
+
+		request.getRequestDispatcher(path).forward(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		String title = request.getParameter("title");
+		String body = request.getParameter("body");
+		int writerMemberNo = ((MemberDTO) request.getSession().getAttribute("loginMember")).getNo();
+
+		NoticeDTO newNotice = new NoticeDTO();
+		newNotice.setTitle(title);
+		newNotice.setBody(body);
+		newNotice.setWriterMemberNo(writerMemberNo);
+
+		NoticeService noticeService = new NoticeService();
+		int result = noticeService.insertNotice(newNotice);
+
+		String path = "";
+		if (result > 0) {
+			path = "/WEB-INF/views/common/success.jsp";
+			request.setAttribute("successCode", "insertNotice");
+		} else {
+			path = "/WEB-INF/views/common/failed.jsp";
+			request.setAttribute("message", "공지사항 등록에 실패하셨습니다.");
+		}
+
+		request.getRequestDispatcher(path).forward(request, response);
 	}
 
 }

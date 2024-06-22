@@ -1,5 +1,9 @@
 package com.javanos.project.notice.model.dao;
 
+import java.util.List;
+
+import com.javanos.project.notice.model.dto.NoticeDTO;
+
 public interface NoticeDAO {
 	
 	/* 공지사항 목록 전체 조회용 메소드 */

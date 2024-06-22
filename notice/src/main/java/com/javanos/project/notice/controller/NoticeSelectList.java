@@ -1,40 +1,37 @@
 package com.javanos.project.notice.controller;
 
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
-/**
- * Servlet implementation class NoticeSelectList
- */
+import com.javanos.project.notice.model.dto.NoticeDTO;
+import com.javanos.project.notice.model.service.NoticeService;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 @WebServlet("/NoticeSelectList")
 public class NoticeSelectList extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
-    /**
-     * Default constructor. 
-     */
-    public NoticeSelectList() {
-        // TODO Auto-generated constructor stub
-    }
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
+		List<NoticeDTO> noticeList = new NoticeService().selectAllNoticeList();
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		System.out.println(noticeList);
+
+		String path = "";
+		if (noticeList != null) {
+			path = "/WEB-INF/views/notice/noticeList.jsp";
+			request.setAttribute("noticeList", noticeList);
+		} else {
+			path = "/WEB-INF/views/common/failed.jsp";
+			request.setAttribute("message", "공지사항 조회 실패!");
+		}
+
+		request.getRequestDispatcher(path).forward(request, response);
 	}
 
 }
